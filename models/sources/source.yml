@@ -1,0 +1,6 @@
+sources:
+  - name: raw
+    database:  INSURANCE_ANALYTICS_DB
+    schema: raw  
+    tables:
+      - name: BRZ_INSURANCE
