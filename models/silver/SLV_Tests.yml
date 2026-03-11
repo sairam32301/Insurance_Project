@@ -1,0 +1,28 @@
+version: 2
+
+models:
+  - name: SLV_ADJUSTER
+    columns:
+
+      - name: adjuster_id
+        tests:
+          - not_null
+
+      - name: approved_amount
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+             arguments: 
+              min_value: 0
+
+      - name: documentation_complete
+        tests:
+          - accepted_values:
+             arguments:
+              values: [Yes, No]
+
+      - name: estimated_loss_amount
+        tests:
+          - dbt_utils.accepted_range:
+             arguments:
+              min_value: 0
