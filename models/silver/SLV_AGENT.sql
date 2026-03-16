@@ -1,0 +1,53 @@
+{{ config(materialized='table') }}
+
+WITH source_data AS (
+
+SELECT
+    TRIM(agent_id) AS agent_id,
+    TRIM(agent_branch) AS agent_branch,
+    TRIM(agent_grade) AS agent_grade,
+    TRIM(agent_name) AS agent_name,
+    TRIM(issuer_type) AS issuer_type,
+    TRIM(sales_channel) AS sales_channel
+
+FROM {{ source('raw','BRZ_INSURANCE') }}
+
+),
+
+cleaned_data AS (
+
+SELECT *
+FROM source_data
+WHERE
+    agent_id IS NOT NULL
+    AND agent_name IS NOT NULL
+
+),
+
+transformed AS (
+
+SELECT
+
+    agent_id,
+
+    INITCAP(agent_name) AS agent_name,
+
+    INITCAP(agent_branch) AS agent_branch,
+
+    UPPER(agent_grade) AS agent_grade,
+
+    INITCAP(issuer_type) AS issuer_type,
+
+    INITCAP(sales_channel) AS sales_channel,
+
+    CASE
+        WHEN agent_grade IN ('A','A+') THEN 'Top Performer'
+        WHEN agent_grade = 'B' THEN 'Average Performer'
+        ELSE 'Low Performer'
+    END AS performance_segment
+
+FROM cleaned_data
+
+)
+
+SELECT * FROM transformed
