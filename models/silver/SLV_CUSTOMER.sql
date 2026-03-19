@@ -11,6 +11,7 @@ WITH source_data AS (
         UPPER(TRIM(gender)) AS gender,
         UPPER(TRIM(marital_status)) AS marital_status,
         TRY_TO_DATE(dob,'DD-MM-YYYY') AS dob,
+        customer_phone,
         TRIM(alcohol_consumption) AS alcohol_consumption,
         TRIM(smoking_frequency) AS smoking_frequency,
         TRY_TO_NUMBER(annual_income) AS annual_income,
@@ -35,6 +36,8 @@ cleaned_data AS (
         AND dob IS NOT NULL
         AND customer_email IS NOT NULL
         AND annual_income IS NOT NULL
+        AND customer_phone IS NOT NULL
+        AND upper(customer_phone) NOT LIKE '%P%'
 
 ),
 
@@ -48,6 +51,10 @@ transformed AS (
         marital_status,
         dob,
         DATEDIFF(year, dob, CURRENT_DATE()) AS age,
+        case when customer_phone  like '%E%' then
+        concat(
+        substr(concat('+', try_to_number(customer_phone)), 1, 3), ' ',substr(concat('+', try_to_number(customer_phone)), 4))      
+        else concat(substr(customer_phone, 1, 3),' ',substr(customer_phone,4))  end as customer_phone,
         customer_email,
         CONCAT(customer_address, ', ', customer_city, ', ', customer_country) AS customer_address,
         INITCAP(customer_city) AS customer_city,

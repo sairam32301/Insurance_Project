@@ -31,9 +31,10 @@ cleaned as (
     select 
         coalesce(card_expiry, 'NA') as card_expiry,
         coalesce(upper(card_issuer_bank), 'UNKNOWN') as card_issuer_bank,
+        case when card_number like '%E%' then cast(try_to_number(card_number) as varchar)
+             else coalesce(card_number,'UNKNOWN') end as card_number,
         coalesce(card_last4, '0000') as card_last4,
         coalesce(upper(card_network), 'UNKNOWN') as card_network,
-        concat('XXXX-XXXX-XXXX-', coalesce(card_last4, '0000')) as masked_card_number, --masked card
         coalesce(upper(card_type), 'UNKNOWN') as card_type,
         coalesce(netbanking_account_mask, 'NA') as netbanking_account_mask,
         coalesce(upper(netbanking_bank), 'UNKNOWN') as netbanking_bank,
@@ -65,9 +66,9 @@ mapped as (
 select 
     card_expiry,
     card_issuer_bank,
+    card_number,
     card_last4,
     card_network,
-    masked_card_number,
     card_type,
     netbanking_account_mask,
     netbanking_bank,

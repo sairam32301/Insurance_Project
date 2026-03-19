@@ -1,6 +1,8 @@
 {{ config(materialized='table') }}
 select
-   adjuster_id,
+    case when ADJUSTER_ID like '%E%' then cast(try_to_number(ADJUSTER_ID) as varchar)
+        else coalesce(ADJUSTER_ID,'UNKNOWN')
+        end as ADJUSTER_ID,
     case
        when lower(documentation_complete) = 'yes' then true
        when lower(documentation_complete) = 'no' then false
