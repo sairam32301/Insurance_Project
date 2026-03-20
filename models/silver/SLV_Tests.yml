@@ -35,3 +35,11 @@ models:
               arguments:
                values: ['INDIA']
                severnity: error #Pipe line will fail if there is an data missmatch
+  
+  - name: SLV_RECORD
+    columns: 
+      - name: is_lead
+        tests:
+        - accepted_values:
+            arguments:
+              values: ['yes','No']
