@@ -17,9 +17,17 @@ clean-targets:         # directories to be removed by `dbt clean`
 
 models:
   Insurance_Analytics_DBT:
+    # Default materialization changed from transient to table
+    +materialized: view
+    +transient: false
     bronze:
+    # Bronze kept as view for raw ingestion layer
+      +schema: bronze
       +materialized: view
     silver:
-      +materialized: table
-
+     +schema: silver
+     +materialized: table
+seeds:
+  Insurance_Analytics_DBT:
+    +schema: seed
             
