@@ -6,6 +6,9 @@
 
 select
     claim_id,
+    case when policy_id like '%E%' then cast(try_to_number(policy_id) as varchar)
+        when policy_id is null or upper(policy_id) like '%P%' then 'UNKNOWN'
+        else policy_id end as policy_id,
     claim_amount,
     claim_cause,
     claim_date,
@@ -25,6 +28,7 @@ select
     current_timestamp as load_timestamp
 from {{ source('raw','BRZ_INSURANCE') }}
 where claim_id is not null
+and policy_id is not null
 and claim_amount is not null
 and claim_date is not null
 and claim_status is not null
