@@ -7,6 +7,8 @@ with source_data as (
     select 
         source_system,
         policy_id,
+        customer_id,
+        agent_id,
         policy_end_date,
         policy_number,
         policy_start_date,
@@ -27,6 +29,8 @@ cleaned as (
         case when policy_id like '%E%' then cast(try_to_number(policy_id) as varchar)
         when policy_id is null or upper(policy_id) like '%P%' then 'UNKNOWN'
         else policy_id end as policy_id,
+        TRIM(customer_id) AS customer_id,
+        TRIM(agent_id) AS agent_id,
         coalesce(policy_number, 'NA') as policy_number,
         coalesce(
             try_to_date(policy_start_date, 'YYYY-MM-DD'),
@@ -53,6 +57,8 @@ cleaned as (
 select 
     source_system,
     policy_id,
+    customer_id,
+    agent_id,
     policy_number,
     policy_start_date,
     policy_end_date,
@@ -63,7 +69,9 @@ select
     premium_amount,
     sum_assured
 from cleaned
-where policy_term_years > 0
+where customer_id IS NOT NULL
+and agent_id IS NOT NULL
+and policy_term_years > 0
 and premium_amount  > 0
 and sum_assured > 0
 and regexp_like(policy_id, '^[0-9]+$')

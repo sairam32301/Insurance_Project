@@ -27,6 +27,9 @@ models:
     silver:
      +schema: silver
      +materialized: table
+    gold:
+     +schema: gold
+     +materialized: table
 seeds:
   Insurance_Analytics_DBT:
     +schema: seed
