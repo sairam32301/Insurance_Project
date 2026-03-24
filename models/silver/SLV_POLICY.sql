@@ -26,9 +26,7 @@ cleaned as (
 
     select 
         upper(coalesce(source_system, 'UNKNOWN')) as source_system,
-        case when policy_id like '%E%' then cast(try_to_number(policy_id) as varchar)
-        when policy_id is null or upper(policy_id) like '%P%' then 'UNKNOWN'
-        else policy_id end as policy_id,
+        REGEXP_REPLACE(UPPER(TRIM(policy_id)), '[^0-9]', '') AS policy_id,
         TRIM(customer_id) AS customer_id,
         TRIM(agent_id) AS agent_id,
         coalesce(policy_number, 'NA') as policy_number,
@@ -52,7 +50,6 @@ cleaned as (
     from source_data
 
 )
-
 
 select 
     source_system,

@@ -1,0 +1,8 @@
+select 
+    AGENT_ID
+    ,AGENT_NAME
+    ,AGENT_BRANCH
+    ,AGENT_GRADE
+    ,SALES_CHANNEL
+    ,PERFORMANCE_SEGMENT
+from {{ref('SLV_AGENT')}}

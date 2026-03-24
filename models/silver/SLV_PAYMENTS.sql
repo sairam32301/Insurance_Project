@@ -7,6 +7,7 @@ with source_data as (
 
     select 
         policy_id,
+        customer_id,
         card_expiry,
         card_issuer_bank,
         card_last4,
@@ -33,6 +34,7 @@ cleaned as (
         case when policy_id like '%E%' then cast(try_to_number(policy_id) as varchar)
         when policy_id is null or upper(policy_id) like '%P%' then 'UNKNOWN'
         else policy_id end as policy_id,
+        TRIM(customer_id) AS customer_id,
         coalesce(card_expiry, 'NA') as card_expiry,
         coalesce(upper(card_issuer_bank), 'UNKNOWN') as card_issuer_bank,
         case when card_number like '%E%' then cast(try_to_number(card_number) as varchar)
@@ -69,6 +71,7 @@ mapped as (
 
 select 
     policy_id,
+    customer_id,
     card_expiry,
     card_issuer_bank,
     card_number,
@@ -88,8 +91,9 @@ select
 
 from mapped
 where policy_id is not null
-and policy_id != 'UNKNOWN'
+      and policy_id != 'UNKNOWN'
+      and customer_id is not null
 
 {% if is_incremental() %}
-where netbanking_txn_ref not in (select netbanking_txn_ref from {{ this }})
+and netbanking_txn_ref not in (select netbanking_txn_ref from {{ this }})
 {% endif %}

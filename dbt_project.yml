@@ -30,6 +30,9 @@ models:
     gold:
      +schema: gold
      +materialized: table
+    KPI:
+     +schema: KPI
+     +materialized: view
 seeds:
   Insurance_Analytics_DBT:
     +schema: seed

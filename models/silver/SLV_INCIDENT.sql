@@ -5,6 +5,7 @@
 with source_data as (
 
     select 
+            claim_id,
             incident_address,
             incident_city,
             incident_country,
@@ -19,6 +20,7 @@ with source_data as (
 cleaned as (
 
     select
+        TO_VARCHAR(TRY_TO_NUMBER(REGEXP_REPLACE(claim_id, '[^0-9]', ''))) AS claim_id,
         trim(incident_address) as incident_address,
         coalesce(trim(incident_city), 'UNKNOWN_CITY') as incident_city,
         case 
