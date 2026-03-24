@@ -1,32 +1,42 @@
 {{ config(
     materialized = 'incremental',
     unique_key = 'claim_id',
-    on_schema_change = 'sync_all_columns'
+    on_schema_change = 'sync_all_columns',
+    tags = ['claims', 'silver']
 ) }}
 
 select
-    claim_id,
-    case when policy_id like '%E%' then cast(try_to_number(policy_id) as varchar)
-        when policy_id is null or upper(policy_id) like '%P%' then 'UNKNOWN'
-        else policy_id end as policy_id,
-    claim_amount,
+    TO_VARCHAR(TRY_TO_NUMBER(REGEXP_REPLACE(claim_id, '[^0-9]', ''))) AS claim_id,
+    REGEXP_REPLACE(UPPER(TRIM(policy_id)), '[^0-9]', '') AS policy_id,
+    TRY_TO_NUMBER(claim_amount) AS claim_amount,
     claim_cause,
     claim_date,
     claim_status,
     claim_subcause,
-    fault_party,
-    injury_severity,
-    loss_type,
-    payout_ratio,
+    COALESCE(fault_party, 'NA') AS fault_party,
+    COALESCE(injury_severity, 'NA') AS injury_severity,
+    COALESCE(loss_type, 'NA') AS loss_type,
+    COALESCE(payout_ratio, 0) AS payout_ratio,
     police_report_filed,
-    fraud_score,
-    case
-        when try_to_number(fraud_score) >= 80 then 'HIGH'
-        when try_to_number(fraud_score) >= 50 then 'MEDIUM'
-        else 'LOW'
-    end as fraud_risk_category,
+    COALESCE(
+    CASE 
+        WHEN REGEXP_LIKE(fraud_score, '^[0-9]+$') 
+        THEN TO_NUMBER(fraud_score)
+        ELSE NULL
+    END,0) AS fraud_score,
+    CASE 
+        WHEN REGEXP_LIKE(fraud_score, '^[0-9]+$') THEN
+            CASE 
+                WHEN TO_NUMBER(fraud_score) >= 80 THEN 'HIGH'
+                WHEN TO_NUMBER(fraud_score) >= 50 THEN 'MEDIUM'
+                ELSE 'LOW'
+            END
+        ELSE UPPER(fraud_score)
+    END AS fraud_risk_category,
     current_timestamp as load_timestamp
+
 from {{ source('raw','BRZ_INSURANCE') }}
+
 where claim_id is not null
 and policy_id is not null
 and claim_amount is not null

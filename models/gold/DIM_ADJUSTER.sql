@@ -1,0 +1,5 @@
+select 
+    ADJUSTER_ID
+    ,ADJUSTER_COMMENTS
+    ,UNDERWRITING_COMMENTS
+from {{ref('SLV_ADJUSTER')}}

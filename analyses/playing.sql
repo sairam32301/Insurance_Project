@@ -1,2 +1,4 @@
-select distinct(source_system)
-from {{ source('raw','BRZ_INSURANCE') }}
+select 
+    count(*) as total_rows,
+    count(payout_ratio) as non_null_values
+from {{ ref('SLV_CLAIM') }}
