@@ -11,9 +11,14 @@ policy as (
 customer as (
     select * from {{ ref('SLV_CUSTOMER') }}
 )
+,
+adjuster as (
+    select * from {{ ref('SLV_ADJUSTER')}}
+)
 
 select
     c.claim_id,
+    a.ADJUSTER_ID,
     p.policy_id,
     cust.customer_id,
     c.claim_date,
@@ -28,3 +33,6 @@ left join policy p
 
 left join customer cust
     on p.customer_id = cust.customer_id
+
+left join adjuster a
+     on a.ADJUSTER_ID  = c.ADJUSTER_ID

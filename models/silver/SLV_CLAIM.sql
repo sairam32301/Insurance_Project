@@ -8,6 +8,9 @@
 select
     TO_VARCHAR(TRY_TO_NUMBER(REGEXP_REPLACE(claim_id, '[^0-9]', ''))) AS claim_id,
     REGEXP_REPLACE(UPPER(TRIM(policy_id)), '[^0-9]', '') AS policy_id,
+    case when ADJUSTER_ID like '%E%' then cast(try_to_number(ADJUSTER_ID) as varchar)
+        else coalesce(ADJUSTER_ID,'UNKNOWN')
+        end as ADJUSTER_ID,
     TRY_TO_NUMBER(claim_amount) AS claim_amount,
     claim_cause,
     claim_date,
@@ -39,6 +42,7 @@ from {{ source('raw','BRZ_INSURANCE') }}
 
 where claim_id is not null
 and policy_id is not null
+and adjuster_id is not null
 and claim_amount is not null
 and claim_date is not null
 and claim_status is not null

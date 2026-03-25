@@ -4,6 +4,7 @@ WITH source_data AS (
 
 SELECT
     TRIM(agent_id) AS agent_id,
+    TRIM(office_address) AS office_address,
     TRIM(agent_branch) AS agent_branch,
     TRIM(agent_grade) AS agent_grade,
     TRIM(agent_name) AS agent_name,
@@ -29,25 +30,25 @@ transformed AS (
 SELECT
 
     agent_id,
-
     INITCAP(agent_name) AS agent_name,
-
     INITCAP(agent_branch) AS agent_branch,
-
+    CASE 
+        WHEN office_address IS NULL THEN NULL
+        WHEN REGEXP_LIKE(office_address, '^[\/]+$') THEN NULL  
+        WHEN UPPER(TRIM(office_address)) = 'ADDR' THEN NULL     
+        ELSE TRIM(REGEXP_REPLACE(office_address, '[\\/]', ''))  
+    END AS office_address,
     UPPER(agent_grade) AS agent_grade,
-
     INITCAP(issuer_type) AS issuer_type,
-
     INITCAP(sales_channel) AS sales_channel,
-
     CASE
         WHEN agent_grade IN ('A','A+') THEN 'Top Performer'
         WHEN agent_grade = 'B' THEN 'Average Performer'
         ELSE 'Low Performer'
     END AS performance_segment
-
 FROM cleaned_data
 
 )
 
 SELECT * FROM transformed
+where office_address is not null
