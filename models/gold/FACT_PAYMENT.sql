@@ -1,5 +1,6 @@
 select 
-    p.policy_id
+    row_number() over (order by MODE_OF_PAYMENT) as payment_method_id
+   ,p.policy_id
    ,p.customer_id
    ,p.mode_of_payment
    ,P.PAYMENT_FREQUENCY
