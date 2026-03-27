@@ -64,12 +64,14 @@ transformed AS (
         alcohol_consumption,
         smoking_frequency,
         CASE
+            WHEN annual_income IS NULL THEN NULL
             WHEN annual_income > 100000 THEN 'High Income'
             WHEN annual_income BETWEEN 50000 AND 100000 THEN 'Middle Income'
             ELSE 'Low Income'
         END AS income_segment,
         
         CASE
+            WHEN alcohol_consumption IS NULL OR smoking_frequency IS NULL THEN NULL
             WHEN alcohol_consumption = 'High' OR smoking_frequency = 'Daily'
             THEN 'High Risk'
             WHEN alcohol_consumption = 'Moderate'

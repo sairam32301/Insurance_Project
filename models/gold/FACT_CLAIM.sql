@@ -28,11 +28,13 @@ select
     c.payout_ratio
   
 from claim c
-left join policy p
+inner join policy p
     on c.policy_id = p.policy_id
-
-left join customer cust
+inner join customer cust
     on p.customer_id = cust.customer_id
-
-left join adjuster a
+inner join adjuster a
      on a.ADJUSTER_ID  = c.ADJUSTER_ID
+where c.claim_id is not null
+and p.policy_id is not null
+and cust.customer_id is not null
+and a.adjuster_id is not null
