@@ -1,6 +1,6 @@
 select 
     customer_id
-    ,first_name || ' ' || last_name AS full_name
+    ,CONCAT_WS(' ', NULLIF(first_name, ''), NULLIF(last_name, '')) AS full_name
     ,gender
     ,dob
     ,age

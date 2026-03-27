@@ -25,14 +25,14 @@ models:
       +schema: bronze
       +materialized: view
     silver:
-     +schema: silver
-     +materialized: table
+      +schema: silver
+      +materialized: table
     gold:
-     +schema: gold
-     +materialized: table
+      +schema: gold
+      +materialized: table
     KPI:
-     +schema: KPI
-     +materialized: view
+      +schema: KPI
+      +materialized: view
 seeds:
   Insurance_Analytics_DBT:
     +schema: seed
