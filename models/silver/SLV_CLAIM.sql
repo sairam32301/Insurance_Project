@@ -19,7 +19,7 @@ select
     COALESCE(fault_party, 'NA') AS fault_party,
     COALESCE(injury_severity, 'NA') AS injury_severity,
     COALESCE(loss_type, 'NA') AS loss_type,
-    COALESCE(payout_ratio, 0) AS payout_ratio,
+    COALESCE(TRY_TO_NUMBER(payout_ratio), 0) AS payout_ratio,
     police_report_filed,
     COALESCE(
     CASE 

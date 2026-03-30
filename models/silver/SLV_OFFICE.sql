@@ -5,6 +5,7 @@
 with source_data as (
 
     select
+        policy_id,
         office_address,
         office_city,
         office_country,
@@ -16,6 +17,7 @@ with source_data as (
 cleaned as (
 
     select
+        REGEXP_REPLACE(UPPER(TRIM(policy_id)), '[^0-9]', '') AS policy_id,
         CASE 
         WHEN office_address IS NULL THEN NULL
         WHEN REGEXP_LIKE(office_address, '^[\/]+$') THEN NULL  
@@ -33,7 +35,8 @@ filtered as (
 
     select *
     from cleaned
-    where office_address is not null
+    where policy_id is not null
+        and office_address is not null
         and office_city is not null
         and office_country is not null
         and office_zip is not null

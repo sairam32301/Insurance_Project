@@ -6,6 +6,7 @@ WITH source_data AS (
 
     SELECT
         TRIM(customer_id) AS customer_id,
+        REGEXP_REPLACE(UPPER(TRIM(policy_id)), '[^0-9]', '') AS policy_id,
         TRIM(first_name) AS first_name,
         TRIM(last_name) AS last_name,
         UPPER(TRIM(gender)) AS gender,
@@ -31,6 +32,7 @@ cleaned_data AS (
     FROM source_data
     WHERE
         customer_id IS NOT NULL
+        AND policy_id IS NOT NULL
         AND first_name IS NOT NULL
         AND last_name IS NOT NULL
         AND dob IS NOT NULL
@@ -45,6 +47,7 @@ transformed AS (
 
     SELECT
         customer_id,
+        policy_id,
         INITCAP(first_name) AS first_name,
         INITCAP(last_name) AS last_name,
         gender,

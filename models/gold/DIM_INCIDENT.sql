@@ -1,5 +1,5 @@
 select 
-    claim_id AS INCIDENT_ID
+    claim_id
     ,INCIDENT_DATE
     ,INCIDENT_CITY
     ,INCIDENT_COUNTRY
