@@ -2,6 +2,7 @@ select
     policy_id,
     customer_id,
     agent_id,
+    product_id,
     POLICY_START_DATE,
     POLICY_END_DATE,
     POLICY_STATUS,
