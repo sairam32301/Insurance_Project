@@ -9,12 +9,20 @@ config(
 )
 }}
 
+with deduped as (
+    select
+        *,
+        row_number() over (partition by claim_id order by claim_date desc) as rn
+    from {{ ref('SLV_CLAIM') }}
+)
+
 select
     claim_id,
-    claim_amount,
+    TRY_TO_NUMBER(claim_amount) AS claim_amount,
     claim_status,
-    fraud_score,
+    TRY_TO_NUMBER(fraud_score) AS fraud_score,
     claim_date
-from {{ ref('SLV_CLAIM') }}
+from deduped
+where rn = 1
 
 {% endsnapshot %}

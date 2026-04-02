@@ -31,14 +31,14 @@ SELECT
 
     agent_id,
     INITCAP(agent_name) AS agent_name,
-    INITCAP(agent_branch) AS agent_branch,
+    coalesce(INITCAP(agent_branch),'UNKNOWN') AS agent_branch,
     CASE 
-        WHEN office_address IS NULL THEN NULL
-        WHEN REGEXP_LIKE(office_address, '^[\/]+$') THEN NULL  
-        WHEN UPPER(TRIM(office_address)) = 'ADDR' THEN NULL     
+        WHEN office_address IS NULL THEN 'UNKNOWN'
+        WHEN REGEXP_LIKE(office_address, '^[\/]+$') THEN 'UNKNOWN'  
+        WHEN UPPER(TRIM(office_address)) = 'ADDR' THEN 'UNKNOWN'     
         ELSE TRIM(REGEXP_REPLACE(office_address, '[\\/]', ''))  
     END AS office_address,
-    UPPER(agent_grade) AS agent_grade,
+    coalesce(UPPER(agent_grade), 'UNKNOWN') AS agent_grade,
     INITCAP(issuer_type) AS issuer_type,
     INITCAP(sales_channel) AS sales_channel,
     CASE
@@ -51,4 +51,3 @@ FROM cleaned_data
 )
 
 SELECT * FROM transformed
-where office_address is not null
